@@ -2,6 +2,7 @@ import streamlit as st
 import query_data
 import re
 import populate_database
+import list_docs
 import os
 
 def escape_markdown(text):
@@ -12,20 +13,32 @@ def escape_markdown(text):
     return re.sub(md_special_chars, lambda m: f"\\{m.group(0)}", text)
 
 
+def update_db():
+    with st.spinner("Updating database..."):
+        try:
+            documents = populate_database.load_documents()
+            chunks = populate_database.split_documents(documents)
+            result = populate_database.add_to_chroma(chunks)
+            st.success(f"Database updated successfully.")
+        except Exception as e:
+            st.error(f"An error occurred while updating the database: {e}")    
+
+
 def main():
+    
     st.set_page_config(page_title="RAG LLM Query Interface")
     
     st.title("RAG LLM Query Interface")
 
+    #update_db() 
 
-    # Query section
     query_section()
 
-    # Add documents section
     add_documents_section()
 
-    # 
-    clear_database_section()
+    #clear_database_section()
+    
+    list_docs.list_documents_section()
 
 def query_section():
     st.subheader("Query Section")
@@ -50,15 +63,9 @@ def add_documents_section():
     if uploaded_file is not None:
         save_uploaded_file(uploaded_file)
         st.success(f"File '{uploaded_file.name}' added successfully.")
-        if st.button("Update Database"):
-            with st.spinner("Updating database..."):
-                try:
-                    documents = populate_database.load_documents()
-                    chunks = populate_database.split_documents(documents)
-                    result = populate_database.add_to_chroma(chunks)
-                    st.success(f"Database updated successfully.")
-                except Exception as e:
-                    st.error(f"An error occurred while updating the database: {e}")    
+        update_db()
+
+
         
 
 

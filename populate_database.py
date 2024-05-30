@@ -29,6 +29,7 @@ def main():
 
 def load_documents():
     document_loader = PyPDFDirectoryLoader(DATA_PATH)
+    print("docs loaded")
     return document_loader.load()
 
 
@@ -39,6 +40,7 @@ def split_documents(documents: list[Document]):
         length_function=len,
         is_separator_regex=False,
     )
+    print("docs splitted")
     return text_splitter.split_documents(documents)
 
 
@@ -47,7 +49,7 @@ def add_to_chroma(chunks: list[Document]):
     db = Chroma(
         persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
     )
-
+    print("aa")
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)
 
@@ -61,7 +63,6 @@ def add_to_chroma(chunks: list[Document]):
     for chunk in chunks_with_ids:
         if chunk.metadata["id"] not in existing_ids:
             new_chunks.append(chunk)
-    print("huh")
     if len(new_chunks):
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]
         db.add_documents(new_chunks, ids=new_chunk_ids)
@@ -69,7 +70,6 @@ def add_to_chroma(chunks: list[Document]):
         return (f"👉 Adding new documents: {len(new_chunks)}")
     else:
         return("✅ No new documents to add")
-
 
 
 def calculate_chunk_ids(chunks):
@@ -101,6 +101,14 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
+def list_chroma_documents():
+    try:
+        embedding_function = get_embedding_function()
+        db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
+        return db.get()
+    except Exception as e:
+        raise e
+    
 def clear_database():
     if os.path.exists(CHROMA_PATH):
         shutil.rmtree(CHROMA_PATH)

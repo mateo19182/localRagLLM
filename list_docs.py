@@ -12,28 +12,27 @@ def list_files_in_data():
         st.write("No files found in 'data' directory.")
         return []
 
-    files = os.listdir(data_dir)
+    files = [os.path.join(data_dir, f) for f in os.listdir(data_dir)]
     return files
 
-def delete_file(file_name):
+def delete_file(file_path):
     """Helper function to delete a file."""
     try:
-        os.remove(os.path.join("data",file_name))
-        st.success(f"Deleted {file_name}")
+        os.remove(file_path)
+        st.success(f"Deleted {os.path.basename(file_path)}")
         app.update_db()
+        return True
     except Exception as e:
-        st.error(f"Error deleting {file_name}: {e}")
-
+        st.error(f"Error deleting {os.path.basename(file_path)}: {e}")
+        return False
 
 def list_documents_section():
     st.subheader("Currently Loaded Documents")
 
-    # Use Streamlit session state to manage the list of files
-    if 'files' not in st.session_state:
-        st.session_state.files = list_files_in_data()
+    # Refresh the file list each time the function is called
+    st.session_state.files = list_files_in_data()
 
     if st.session_state.files:
-        # Make a copy of the list to modify while iterating
         files_to_display = st.session_state.files[:]
         for file in files_to_display:
             file_name = os.path.basename(file)
@@ -41,14 +40,17 @@ def list_documents_section():
             with col1:
                 st.write(f"- {file_name}")
             with col2:
-                # Create a unique key for the button using the file name
                 if st.button("Delete", key=file):
                     if delete_file(file):
-                        # If file is deleted, remove it from the session state list
-                        st.session_state.files.remove(file)
+                        # Update the list in the session state after deletion
+                        st.session_state.files = list_files_in_data()
     else:
         st.write("No files found.")
-    
+
+# Ensuring the session state is initialized properly
+if 'files' not in st.session_state:
+    st.session_state.files = list_files_in_data()
+
     # List documents in Chroma database
     # st.write("### Documents in Chroma database:")
     # try:

@@ -1,5 +1,9 @@
 Running RAG using Ollama locally, with a simple GUI and the ability to update the persistant database.
 
+TODO: 
+    - accept files other than pdf
+    - improve RAG
+
 Based on 
     - https://github.com/pixegami/rag-tutorial-v2
     - https://github.com/vndee/local-rag-example
@@ -9,3 +13,4 @@ To run
     - pip install -r requirements.txt
     - streamlit run app.py 
     - open http://localhost:8501 
+

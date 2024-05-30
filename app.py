@@ -59,11 +59,12 @@ def query_section():
 
 def add_documents_section():
     st.subheader("Add Documents")
-    uploaded_file = st.file_uploader("Choose a file to add to the database:", type=["txt", "pdf", "docx"])
-    if uploaded_file is not None:
-        save_uploaded_file(uploaded_file)
-        st.success(f"File '{uploaded_file.name}' added successfully.")
-        update_db()
+    uploaded_files = st.file_uploader("Choose a file to add to the database:", type=["pdf"], accept_multiple_files=True)
+    for uploaded_file in uploaded_files:
+        if uploaded_file is not None:
+            save_uploaded_file(uploaded_file)
+            st.success(f"File '{uploaded_file.name}' added successfully.")
+    update_db()
 
 
         

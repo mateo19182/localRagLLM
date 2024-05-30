@@ -38,15 +38,18 @@ def query_rag(query_text: str):
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
-    # print(prompt)
+    print("PROMPT \n")
+    print(prompt)
 
     model = Ollama(model="mistral")
     response_text = model.invoke(prompt)
 
     sources = [doc.metadata.get("id", None) for doc, _score in results]
+    print("RESPONSE \n")
+
     formatted_response = f"Response: {response_text}\nSources: {sources}"
     print(formatted_response)
-    return response_text
+    return response_text, sources
 
 
 if __name__ == "__main__":

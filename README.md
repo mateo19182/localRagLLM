@@ -1,7 +1,7 @@
-Running RAG using Ollama locally, with a simple GUI and the ability to update the persistant database.
+Running RAG using Ollama locally, with a simple GUI and the ability to update the persistant database. Using Llama3:7b
 
 TODO: 
-    - accept files other than pdf
+    - redo interface, depends on requirements
     - improve RAG
 
 Based on 

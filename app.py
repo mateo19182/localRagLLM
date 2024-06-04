@@ -2,7 +2,6 @@ import streamlit as st
 import query_data
 import re
 import populate_database
-import list_docs
 import os
 
 def escape_markdown(text):

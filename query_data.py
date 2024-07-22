@@ -18,31 +18,25 @@ Answer the question based on the above context: {question}
 """
 
 
-def query_rag(query_text: str) -> Tuple[str, list]:
-    try:
-        embedding_function = get_embedding_function()
-        db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
+def query_rag(query_text: str):
+    embedding_function = get_embedding_function()
+    db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
+    results = db.similarity_search_with_score(query_text, k=5)
+    context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
+    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    prompt = prompt_template.format(context=context_text, question=query_text)
+    print("PROMPT \n")
+    print(prompt)
 
-        results = db.similarity_search_with_score(query_text, k=5)
+    model = Ollama(model="llama3")
+    response_text = model.invoke(prompt)
 
-        context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
-        prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
-        prompt = prompt_template.format(context=context_text, question=query_text)
-        print("PROMPT \n")
-        print(prompt)
+    sources = [doc.metadata.get("id", None) for doc, _score in results]
+    print("RESPONSE \n")
 
-        model = Ollama(model="llama3")
-        response_text = model.invoke(prompt)
-
-        sources = [doc.metadata.get("id", None) for doc, _score in results]
-        print("RESPONSE \n")
-
-        formatted_response = f"Response: {response_text}\nSources: {sources}"
-        print(formatted_response)
-        return response_text, sources
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None, []
+    formatted_response = f"Response: {response_text}\nSources: {sources}"
+    print(formatted_response)
+    return response_text, sources
 
 
 if __name__ == "__main__":

@@ -14,16 +14,16 @@ from langchain_community.vectorstores import Chroma
 
 CHROMA_PATH = "chroma"
 DATA_PATH = os.path.join("data", "archive")
-DOCKER_DIR = "/var/lib/docker/volumes/paperless_media/_data/documents/archive/"
+BASE_DIR = "/var/lib/docker/volumes/paperless_media/_data/documents/archive/"
 API_URL = "https://docs.m19182.dev/api/documents/"
-API_CREDENTIALS = ("mateo", "1612")
+API_CREDENTIALS = 
 
 
 def sanitize_filename(filename: str) -> str:
     return ''.join(c for c in filename if c.isalnum() or c in (' ', '.', '_', '-')).rstrip()
 
-def get_docker_files() -> Set[str]:
-    result = subprocess.run(['sudo', 'ls', DOCKER_DIR], capture_output=True, text=True, check=True)
+def get_paperless_files() -> Set[str]:
+    result = subprocess.run(['sudo', 'ls', BASE_DIR], capture_output=True, text=True, check=True)
     return set(result.stdout.split())
 
 def copy_file(src: str, dst: str):
@@ -57,11 +57,11 @@ def update_titles():
         # Step 4: Get missing files from Docker volume
         new_files = []
         if missing_ids:
-            docker_files = get_docker_files()
+            docker_files = get_paperless_files()
             for file_id in missing_ids:
                 docker_filename = format_docker_filename(file_id)
                 if docker_filename in docker_files:
-                    src = os.path.join(DOCKER_DIR, docker_filename)
+                    src = os.path.join(BASE_DIR, docker_filename)
                     sanitized_title = sanitize_filename(api_id_title_map[file_id])
                     new_filename = f"{file_id}_{sanitized_title}.pdf"
                     dst = os.path.join(DATA_PATH, new_filename)

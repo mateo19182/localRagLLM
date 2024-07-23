@@ -1,5 +1,7 @@
 Running RAG using Ollama locally, with a simple GUI and the ability to update the persistant database. Using Llama3:7b
 
+connects with paperless-ngx
+
 TODO: 
     - redo interface, depends on requirements
     - improve RAG

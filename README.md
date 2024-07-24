@@ -2,7 +2,7 @@
 
 This project implements a Retrieval-Augmented Generation (RAG) system using Ollama locally, with a simple GUI built using Streamlit. It features the ability to update a persistent vector database and uses the Llama3 7B model. Also integrates with Paperless-ngx for document management and easy OCR.
 
-Ollama need to be installed locally
+Ollama need to be installed locally.
 
 ## Installation
 
@@ -34,4 +34,5 @@ Ollama need to be installed locally
 
 - [ ] Reduce dependencies
 - [ ] Improve RAG implementation
+- [ ] Update bien
 
